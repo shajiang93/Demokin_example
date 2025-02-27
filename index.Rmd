@@ -1,13 +1,9 @@
 ---
 title: "Modelling Kinship Dynamics through `DemoKin`"
-# subtitle: "National University of Singapore, Singapore, February 5, 2025"
-# author: "Instructors: Diego Alburez-Gutierrez & Sha Jiang"
 date: "Updated: `r Sys.Date()`"
 output:
   html_document:
-    # toc_depth: 3
-    toc_float: true
-    # number_sections: true
+    toc: false  # Disable default TOC since we'll create our own
     theme: readable
     highlight: pygments
     self_contained: false
@@ -66,16 +62,24 @@ library(DemoKin)
 ## Model Stratified by Age {.tabset}
 
 ### Simple model: One-sex time-invariant
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+<!-- Create custom TOC for this section -->
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#load-packages">1. Load packages</a></li>
+  <li><a href="#demographic-data">2. Demographic data</a></li>
+  <li><a href="#the-demokin-package">3. The DemoKin package</a></li>
+  <li><a href="#kinship-diagrams">4. Kinship diagrams</a></li>
+  <li><a href="#number-of-living-kin">5. Number of living kin</a></li>
+  <li><a href="#age-distribution-of-living-kin">6. Age distribution of living kin</a></li>
+</ul>
+</div>')
 ```
 
 First, we compute kin counts in a **time-invariant** framework. We assume that Focal and all of her relatives experience the 2015 mortality and fertility rates throughout their entire lives [@caswell_formal_2019]. The `DemoKin` package includes data from Sweden as an example: age-by-year matrices of survival probabilities (*swe_px*), survival ratios (*swe_Sx*), fertility rates (*swe_asfr*), and population numbers (*swe_pop*). You can see the data contained in `DemoKin` with `data(package="DemoKin")`. This data comes from the [Human Mortality Database](https://www.mortality.org/) and [Human Fertility Database](https://www.humanfertility.org/) (see `?DemoKin::get_HMDHFD`). 
 
-#### 1. Load packages
+#### 1. Load packages {#load-packages}
 Load packages that will be useful:
 
 ```{r, warning=F, message=FALSE}
@@ -93,7 +97,7 @@ Load a couple of functions we prepared:
 source("functions.R")
 ```
 
-#### 2. Demographic data
+#### 2. Demographic data {#demographic-data}
 
 In order to implement the time-invariant models, the function `DemoKin::kin` expects a vector of survival ratios and another vector of fertility rates. In this example, we get the data for the year 2015, and run the matrix models.
 
@@ -172,7 +176,7 @@ swe_pop %>%
   theme(legend.position = "bottom")
 ```
 
-#### 3. The DemoKin package
+#### 3. The DemoKin package {#the-demokin-package}
 
 `DemoKin` can be used to compute the number and age distribution of Focal's relatives under a range of assumptions, including living and deceased kin. Let's explore the main functions.
 
@@ -233,7 +237,7 @@ This is a 'summary' data frame derived from `kin_full`. To produce it, we sum ov
 head(swe_2015$kin_summary)
 ```
 
-#### 4. Kinship diagrams
+#### 4. Kinship diagrams {#kinship-diagrams}
 
 We can visualize the kinship structure we just computed using a network or 'Keyfitz' kinship diagram [@Keyfitz2005] with the `plot_diagram` function. 
 Let's see the expected number of living kin for a 65 yo woman in Singapore according to our model:
@@ -245,7 +249,7 @@ swe_2015$kin_summary %>%
   plot_diagram(rounding = 2)
 ```
 
-#### 5. Number of living kin
+#### 5. Number of living kin {#number-of-living-kin}
 
 Let's run the model again with the same parameters, selecting specific kin types (note the `output_kin` argument:
 
@@ -295,7 +299,7 @@ swe_2015$kin_summary %>%
   theme(legend.position = "bottom")
 ```
 
-#### 6. Age distribution of living kin
+#### 6. Age distribution of living kin {#age-distribution-of-living-kin}
 
 How old are Focal's relatives? Using the `kin_full` data frame, we can visualize the age distribution of Focal's relatives throughout Focal's life. For example when Focal is 65 (the red vertical line in the plot), what are the ages of her relatives:
 
@@ -313,17 +317,22 @@ swe_2015$kin_full %>%
 ```
 
 ### Adding time: One-sex time-varying
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#run-the-model-time-varying">1. Run the model</a></li>
+  <li><a href="#living-relatives">2. Living Relatives</a></li>
+  <li><a href="#kin-loss">3. Kin Loss</a></li>
+  <li><a href="#prevelances">4. Prevelances</a></li>
+</ul>
+</div>')
 ```
 
 The demography of Sweden is, in reality, changing every year. This means that Focal and her relatives will have experienced changing mortality and fertility rates over time.
 We account for this, by using the **one-sex time-varying** models introduced by Caswell and Song [-@caswell_formal_2021]. 
 
-#### 1. Run the model
+#### 1. Run the model {#run-the-model-time-varying}
 Let's take a look at the resulting kin counts for a Focal born in 1960, limiting the output to the relative types given in the argument `output_kin`:
 
 ```{r}
@@ -338,7 +347,7 @@ swe_time_varying <-
     )
 ```
 
-#### 2. Living Realtives
+#### 2. Living Realtives {#living-relatives}
 Let's take a look at the number of living kin again.
 
 ```{r, fig.height=6, fig.width=8}
@@ -353,7 +362,7 @@ swe_time_varying$kin_summary %>%
 
 ```
 
-#### 3. Kin Loss
+#### 3. Kin Loss {#kin-loss}
 
 Kin loss can have severe consequences for bereaved relatives. It can also affect the provision of care support and intergenerational transfers over the life course. 
 The function `kin` also includes information on the number of relatives lost by Focal during her life, stored in the column `count_cum_death`:
@@ -377,7 +386,7 @@ swe_time_varying$kin_summary %>%
   kable()
 ```
 
-#### 4. Prevalences
+#### 4. Prevalences {#prevelances}
 
 Given the distribution of kin by age, we can compute the expected portion of living kin in some stage given a set of prevalences by age (e.g., a disease, employment, etc.). This is known as the Sullivan Method in the life-table literature. A matrix formulation for same results can be found in Caswell [-@caswell_formal_2019], which can also be extended to a time-variant framework. 
 
@@ -405,12 +414,16 @@ swe_2015$kin_full %>%
 ```
 
 ### Adding sex: Two-sex time-invariant
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#model-input-2sex">1. Model Input</a></li>
+  <li><a href="#run-model-2sex">2. Run the model</a></li>
+</ul>
+</div>')
 ```
+
 Human males generally live shorter and reproduce later than females. 
 These sex-specific processes affect kinship dynamics in a number of ways. 
 For example, the degree to which an average member of the population, call her Focal, has a living grandparent is affected by differential mortality affecting the parental generation at older ages. 
@@ -420,7 +433,7 @@ As they live longer, they may find themselves at greater risk of being having no
 The function `kin2sex` implements two-sex kinship models as introduced by Caswell [-@caswell_formal_2022]. 
 This vignette show how to run two-sex models and highlights some of the advantages of this model over one-sex models in populations with time-invariant and time-variant rates.
 
-#### 1. Demographic rates by sex
+#### 1. Model input {#model-input-2sex}
 
 Data on female fertility by age is less common than female fertility. Schoumaker (2019) shows that male TFR is almost always higher than female Total Fertility Rates (TFR) using a sample of 160 countries. 
 For this example, we use data from 2012 France to exemplify the use of the two-sex function. 
@@ -444,7 +457,7 @@ data.frame(value = c(fra_fert_f, fra_fert_m, fra_surv_f, fra_surv_m),
   theme_bw()
 ```
 
-#### 2. Time-invariant two-sex kinship models
+#### 2. Run the model {#run-model-2sex}
 
 We now introduce the functions `kin2sex`, which is similar to the one-sex function `kin` (see `?kin`) with two exceptions. 
 First, the user needs to specify mortality and fertility by sex. 
@@ -523,16 +536,22 @@ kin_out %>%
   facet_wrap(~kin)
 ```
 
-### Both sex and time: Two-sex time-varying + approximation
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+### Adding sex and time: Two-sex time-varying + approximation
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#model-input-2sex-time-varying">1. Model input</a></li>
+  <li><a href="#run-mode-2sex-time-varying">2. Run the model</a></li>
+  <li><a href="#kin-availability-2sex-time-varying">3. Kin Availability</a></li>
+  <li><a href="#approximations">4. Approximations</a></li>
+  <li><a href="#prevelance-2sex-time-varying">5. Prevelance again: Causes of death</a></li>
+</ul>
+</div>')
 ```
 We look at populations where demographic rates are not static but change on a yearly basis. 
 
-#### 1. Data
+#### 1. Model input {#model-input-2sex-time-varying}
 For this, we consider the case of Sweden using data pre-loaded in `DemoKin`.
 For this example, we will create 'pretend' male fertility rates by slightly perturbing the existing female rates. 
 This is a toy example, since a real two-sex model should use actual female and male rates as inputs. 
@@ -560,7 +579,7 @@ bind_rows(
   facet_wrap(~component, scales = "free")
 ```
 
-#### 2. Run the model
+#### 2. Run the model {#run-model-2sex-time-varying}
 We now run the time-variant two-sex models (note the `time_invariant = FALSE` argument):
 
 ```{r}
@@ -576,7 +595,7 @@ kin_out_time_variant <- kin2sex(
                       )
 ```
 
-#### 3. Kin Avalability
+#### 3. Kin Availability {#kin-availability-2sex-time-varying}
 We can plot data on kin availability alongside values coming from a time-invariant model to show how demographic change matters: the time-variant models take into account changes derived from the demographic transition, whereas the time-invariant models assume never-changing rates. 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -600,7 +619,7 @@ kin_out_time_variant$kin_summary %>%
   facet_grid(cols = vars(kin), rows=vars(sex_kin), scales = "free")
 ```
 
-#### 4. Approximations
+#### 4. Approximations {#approximations}
 
 Caswell [-@caswell_formal_2022] introduced two approaches for approximating two-sex kinship structures for cases when male demographic rates are not available. 
 The first is the *androgynous* approximation, which assumes equal fertility and survival for males and females.
@@ -669,7 +688,7 @@ bind_rows(
   facet_grid(col = vars(kin), row = vars(age_focal), scales = "free")
 ```
 
-#### 5. Prevelance again: Causes of death
+#### 5. Prevelance again: Causes of death {#prevalance-2sex-time-varying}
 
 Now assume we have two causes of death (COD). For females, the risk of the first COD is half the risk of the second COD for ages greater than 50. For males, the risk of the first COD is 2/3 of the second COD for ages greater than 50. We operationalize this using two matrices with dimension 2 by 101 (number of causes by number of ages).
 
@@ -716,14 +735,19 @@ In this simplified example, the parents of Focal only died after age 50. This he
 
 You can add as many COD as you want, but keep in mind that this can be computationally intensive. For time-variant kinship models that consider COD, you must provide a list of matrices by sex ($Hf$ and $Hm$). The elements of this list should be $H$ matrices for each year (following the same order than the mortality and fertility components). 
 
-## Model Stratified by both Age and Stage {.tabset}
 
+## Model Stratified by both Age and Stage {.tabset}
 ### Simple model: One-sex Time-invariant Multi-state models
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#run-model-multi-state">1. Run the model</a></li>
+  <li><a href="#age-and-parity-distribution">2. Age and parity distribution of kin</a></li>
+    <li><a href="#kin-by-parity">3. Kin counts by parity</a></li>
+
+</ul>
+</div>')
 ```
 `DemoKin` allows the computation of kin structures in a multi-state framework, classifying individuals jointly by age and some other feature (e.g., stages of a disease). For this, we need mortality and fertility data for each possible stage and probabilities of changing state by age.
 
@@ -735,7 +759,7 @@ Let's consider the example of Slovakia given by Caswell [-@caswell_formal_2021],
 - The data.frame `svk_pxs` has the same structure and represents survival probabilities. 
 - The list `svk_Uxs` has the same number of elements and ages (in this case 110, where $omega$ is 109). For each age, it contains a column-stochastic transition matrix with dimension for the state space. The entries are transition probabilities conditional on survival. 
 
-#### 1. Run the model
+#### 1. Run the model {#run-model-multi-state}
 Following Caswell [-@caswell_formal_2020], we can obtain the joint age-parity kin structure:
 
 ```{r}
@@ -750,7 +774,7 @@ demokin_svk1980_caswell2020 <-
     parity = TRUE)
 ```
 
-#### 2. Age and parity distribution of kin
+#### 2. Age and parity distribution of kin {#age-and-parity-distribution}
 
 Note that the function ask for risks already in a certain matrix format. As an example, consider the age-parity distribution of aunts, when Focal is 20 and 60 yo (this is equivalent to Figure 4 in Caswell [-@caswell_formal_2021]). 
 
@@ -770,7 +794,7 @@ demokin_svk1980_caswell2020 %>%
   facet_wrap(~age_focal, nrow = 2)
 ```
 
-#### 3. Kin counts by parity
+#### 3. Kin counts by parity {#kin-by-parity}
 
 We can also see the portion of living daughters and mothers at different parity stages over Focal's life-course (this is equivalent to Figure 9 and 10 in Caswell [-@caswell_formal_2021]). 
 
@@ -792,11 +816,14 @@ demokin_svk1980_caswell2020 %>%
 This function `kin_multi_stage` can be generalized to any kind of state (be sure to set parameter `parity = FALSE`, de default).
 
 ### Adding sex and time: Two-sex Time-varying Multi-state models {.tabset}
-```{r}
-knitr::knit_child(text = c(
-  "#### Table of Contents",
-  paste0("- [", knitr::all_labels(), "](#", knitr::all_labels(), ")")
-))
+```{r, echo=FALSE, results='asis'}
+cat('<div class="custom-toc">
+<h4>Contents</h4>
+<ul>
+  <li><a href="#parity-as-stage">1. Parity as the stage</a></li>
+  <li><a href="#education-as-stage">2. Education as the stage</a></li>
+</ul>
+</div>')
 ```
 Since Caswell's [@caswell_formal_2019] one-sex time-invariant age-structured matrix model 
 of kinship,  the framework has expanded to incorporate time-varying vital rates [-@caswell_formal_2021], two-sex of kin and focal [-@caswell_formal_2022] and multi-state kin populations [-@caswell_formal_2020].  
@@ -805,7 +832,7 @@ Here, we provide an R function`kin_multi_stage_time_variant_2sex`, which combine
 This function computes stage-specific kinship networks across both sexes for an average member of a population (focal) under time-varying demographic rates. It estimates the number, age, sex, and stage distribution of Focal's relatives, for each age of Focal's life, and as a function of the year in which Focal is born.
 
 To illustrate it, we show two examples, where parity and education are used to stratify different stages.
-#### Parity as the stage
+#### Parity as the stage {#parity-as-stage}
 
 ```{r}
 # library(DemoKin)
@@ -1059,7 +1086,7 @@ kin_out_1965_2005$kin_full %>%
   ggplot2::ggtitle("Focal 50")
 ```
 
-#### Education as the stage
+#### Education as the stage {#education-as-stage}
 
 ##### 1. Data Input
 
@@ -1284,4 +1311,39 @@ We note that there are following simplifying assumptions due to data limitations
 4. Demographic rates remain stable (time-invariant) before 2020, the earliest observed data point.
 
 ## References
+<!-- Add custom CSS for TOC styling -->
+```{css, echo=FALSE}
+.custom-toc {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.custom-toc h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.custom-toc ul {
+  list-style-type: none;
+  padding-left: 5px;
+}
+
+.custom-toc li {
+  margin-bottom: 5px;
+}
+
+.custom-toc a {
+  text-decoration: none;
+  color: #337ab7;
+}
+
+.custom-toc a:hover {
+  text-decoration: underline;
+}
+```
 
